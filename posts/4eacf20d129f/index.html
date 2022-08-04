@@ -157,7 +157,7 @@
 <p>不仅内联了 hello() 函数，还内联了函数参数 postAction()。<br>这，就是 inline 关键字的⽤处：<strong>⾼阶函数（Higher-order Functions）有它们天然的性能缺陷，通过 inline 关键字让函数⽤内联的⽅式进⾏编译，来减少参数对象的创建，从⽽避免出现性能问题。</strong><br>既然 inline 是优化，为什么 Kotlin 没有直接开启它，⽽要把它做成选项，⽽且还是个默认关闭的选项？<br>就是因为它还真不⼀定是优化，加不加它需要我们⾃⼰去做判断。那怎么去做这个判断呢？<br>很简单，如果你写的是⾼阶函数，会有函数类型的参数，加上 inline 就对了。</p>
 <p>如果对于包⼤⼩有⾮常极致的追求，可以酌情使⽤ inline。</p>
 <p>另外，Kotlin 的官⽅源码⾥还有⼀个 inline 的另类⽤法：在函数⾥直接去调⽤ Java 的静态⽅法。</p>
-
+<img src="/posts/4eacf20d129f/%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0-2.png" class="">
 
 <p>⽤这种⽅式来去掉了这些 Java 的静态⽅法的前缀，让调⽤更简单，因为它的函数体简洁，并不会造成字节码膨胀的问题。</p>
 <h3 id="noinline"><a href="#noinline" class="headerlink" title="noinline"></a>noinline</h3><p>函数类型的参数本质上是个对象，可以把这个对象当做函数来调⽤，<strong>不仅是执⾏完函数体</strong>，这也是最常⻅的⽤法。</p>
@@ -165,7 +165,7 @@
 <img src="/posts/4eacf20d129f/%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0-3.png" class="">
 
 <p>代码会被这样编译：</p>
-
+<img src="/posts/4eacf20d129f/%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0-4.png" class="">
 
 <p>那如果真的需要⽤这个对象怎么办？加上 noinline：</p>
 <img src="/posts/4eacf20d129f/%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0-5.png" class="">
