@@ -1,0 +1,179 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Kotlin 密封类（sealed class） | dongdong‘s blog</title><meta name="keywords" content="kotlin"><meta name="author" content="dongdong"><meta name="copyright" content="dongdong"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="简介密封类用来表示受限的类继承结构：当一个值为有限几种的类型, 而不能有任何其他类型时。 在某种意义上，他们是枚举类的扩展：枚举类型的值集合也是受限的，但每个枚举常量只存在一个实例，而密封类的一个子类可以有可包含状态的多个实例。 密封类与枚举类对比相同点 ( 类型限制 ) :  从类型种类角度对比 , 类与枚举类类似 , 枚举类的值的集合是受限制的 , 不能随意扩展  不同点 ( 对象个数限制 )">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kotlin 密封类（sealed class）">
+<meta property="og:url" content="https://dongdong-zx.github.io/posts/bc05b5f1052a/index.html">
+<meta property="og:site_name" content="dongdong‘s blog">
+<meta property="og:description" content="简介密封类用来表示受限的类继承结构：当一个值为有限几种的类型, 而不能有任何其他类型时。 在某种意义上，他们是枚举类的扩展：枚举类型的值集合也是受限的，但每个枚举常量只存在一个实例，而密封类的一个子类可以有可包含状态的多个实例。 密封类与枚举类对比相同点 ( 类型限制 ) :  从类型种类角度对比 , 类与枚举类类似 , 枚举类的值的集合是受限制的 , 不能随意扩展  不同点 ( 对象个数限制 )">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+<meta property="article:published_time" content="2022-08-02T22:09:32.000Z">
+<meta property="article:modified_time" content="2022-08-05T07:30:29.846Z">
+<meta property="article:author" content="dongdong">
+<meta property="article:tag" content="kotlin">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://dongdong-zx.github.io/posts/bc05b5f1052a/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Kotlin 密封类（sealed class）',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-08-05 15:30:29'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" type="text/css" href="/css/categoryBar.css"><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/uploads/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">dongdong‘s blog</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 文章</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">Kotlin 密封类（sealed class）</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-08-02T22:09:32.000Z" title="发表于 2022-08-03 06:09:32">2022-08-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-08-05T07:30:29.846Z" title="更新于 2022-08-05 15:30:29">2022-08-05</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/kotlin%E7%AC%94%E8%AE%B0/">kotlin笔记</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Kotlin 密封类（sealed class）"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a><strong>简介</strong></h3><p>密封类用来表示受限的类继承结构：当一个值为有限几种的类型, 而不能有任何其他类型时。</p>
+<p>在某种意义上，他们是枚举类的扩展：枚举类型的值集合也是受限的，但每个枚举常量只存在一个实例，而密封类的一个子类可以有可包含状态的多个实例。</p>
+<h3 id="密封类与枚举类对比"><a href="#密封类与枚举类对比" class="headerlink" title="密封类与枚举类对比"></a><strong>密封类与枚举类对比</strong></h3><p><strong>相同点 ( 类型限制 ) :</strong> </p>
+<p>从类型种类角度对比 , 类与枚举类类似 , 枚举类的值的集合是受限制的 , 不能随意扩展 </p>
+<p><strong>不同点 ( 对象个数限制 ) :</strong> </p>
+<p>从每个类型对象个数对比 , 枚举类的每个类型只能存在一个实例 , 而密封类的每个类型可以创建无数个实例 </p>
+<h3 id="创建状态集"><a href="#创建状态集" class="headerlink" title="创建状态集"></a>创建状态集</h3><p><strong>密封类声明：</strong>在 class 前添加 sealed 修饰符 , 即可将该类声明为密封类 ;</p>
+<p>和抽象类类似，Sealed Class可用于表示层级关系。它的子类可以是任意的类：data class、普通Kotlin对象、普通的类，甚至也可以是另一个密封类，所以，我们定义一个Result Sealed Class：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title class_">Result</span> &#123;</span><br><span class="line"><span class="comment">//定义网络请求成功</span></span><br><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">OK</span>(<span class="keyword">val</span> result: String) : Result()</span><br><span class="line"><span class="comment">//定义网络请求失败</span></span><br><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">FAIL</span>(<span class="keyword">val</span> throwable: Throwable) : Result()</span><br></pre></td></tr></table></figure>
+
+<p>当然，也不一定非要写在顶层类中（但是要在同一文件下）:</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义结果密封类</span></span><br><span class="line"><span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title class_">Result</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//定义网络请求成功</span></span><br><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">OK</span>(<span class="keyword">val</span> result: String) : Result()</span><br><span class="line"></span><br><span class="line"><span class="comment">//定义网络请求失败</span></span><br><span class="line"><span class="keyword">data</span> <span class="keyword">class</span> <span class="title class_">FAIL</span>(<span class="keyword">val</span> throwable: Throwable) : Result()</span><br></pre></td></tr></table></figure>
+
+<p>这样也是可以的，它们的区别在于引用的时候，是否包含顶层类来引用而已。</p>
+<p>大部分场景下，还是建议第一种方式，可以比较清晰的展示调用的层级关系。</p>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a><strong>使用</strong></h3><p>接下来，我们来看下如何使用Sealed Class。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//模拟封装枚举的产生</span></span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">if</span> (<span class="literal">true</span>) Result.OK(<span class="string">&quot;Success&quot;</span>) <span class="keyword">else</span> Result.FAIL(Exception(<span class="string">&quot;error&quot;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">when</span> (result) &#123;</span><br><span class="line">        <span class="keyword">is</span> Result.OK -&gt; println(result.result)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">is</span> Result.FAIL -&gt; println(result.throwable)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>大部分场景下，Sealed Class都会配合when一起使用，同时，如果when的参数是Sealed Class，在IDE中可以快速补全所有分支，而且不会需要你单独补充else 分支，因为Sealed Class已经是完备的了。</p>
+<p>所以when和Sealed Class真是天作之合。</p>
+<h3 id="进一步简化"><a href="#进一步简化" class="headerlink" title="进一步简化"></a><strong>进一步简化</strong></h3><p>其实我们还可以进一步简化代码的调用，因为我们每次使用Sealed Class的时候，都需要when一下，有些时候，也会产生一些代码冗余，所以，借助拓展函数，我们进一步对代码进行简化。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> Result.<span class="title">doSuccess</span><span class="params">(success: (<span class="type">String</span>) -&gt; <span class="type">Unit</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> <span class="keyword">is</span> Result.OK) &#123;</span><br><span class="line">        success(result)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">inline</span> <span class="function"><span class="keyword">fun</span> Result.<span class="title">doError</span><span class="params">(error: (<span class="type">Exception</span>) -&gt; <span class="type">Unit</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span> <span class="keyword">is</span> Result.FAIL) &#123;</span><br><span class="line">        error(throwable)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在使用一下：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//模拟封装枚举的产生</span></span><br><span class="line">    <span class="keyword">val</span> result = <span class="keyword">if</span> (<span class="literal">true</span>) Result.OK(<span class="string">&quot;Success&quot;</span>) <span class="keyword">else</span> Result.FAIL(Exception(<span class="string">&quot;error&quot;</span>))</span><br><span class="line"></span><br><span class="line">    result.doSuccess &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    result.doError &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="举例"><a href="#举例" class="headerlink" title="举例"></a><strong>举例</strong></h3><p>假如在 Android 中我们有一个 view，我们现在想通过 when 语句设置针对 view 进行两种操作：显示和隐藏，那么就可以这样做：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title class_">UiOp</span> &#123;</span><br><span class="line">    <span class="keyword">object</span> Show: UiOp()</span><br><span class="line">    <span class="keyword">object</span> Hide: UiOp()</span><br><span class="line">&#125; </span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">execute</span><span class="params">(view: <span class="type">View</span>, op: <span class="type">UiOp</span>)</span></span> = <span class="keyword">when</span> (op) &#123;</span><br><span class="line">    UiOp.Show -&gt; view.visibility = View.VISIBLE</span><br><span class="line">    UiOp.Hide -&gt; view.visibility = View.GONE</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上功能其实完全可以用枚举实现，但是如果我们现在想加两个操作：水平平移和纵向平移，并且还要携带一些数据，比如平移了多少距离，平移过程的动画类型等数据，用枚举显然就不太好办了，这时密封类的优势就可以发挥了，例如：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title class_">UiOp</span> &#123;</span><br><span class="line">    <span class="keyword">object</span> Show: UiOp()</span><br><span class="line">    <span class="keyword">object</span> Hide: UiOp()</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">TranslateX</span>(<span class="keyword">val</span> px: <span class="built_in">Float</span>): UiOp()</span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">TranslateY</span>(<span class="keyword">val</span> px: <span class="built_in">Float</span>): UiOp()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">execute</span><span class="params">(view: <span class="type">View</span>, op: <span class="type">UiOp</span>)</span></span> = <span class="keyword">when</span> (op) &#123;</span><br><span class="line">    UiOp.Show -&gt; view.visibility = View.VISIBLE</span><br><span class="line">    UiOp.Hide -&gt; view.visibility = View.GONE</span><br><span class="line">		<span class="comment">// 这个 when 语句分支不仅告诉 view 要水平移动，还告诉 view 需要移动多少距离</span></span><br><span class="line">		<span class="comment">// 这是枚举等 Java 传统思想不容易实现的</span></span><br><span class="line">    <span class="keyword">is</span> UiOp.TranslateX -&gt; view.translationX = op.px </span><br><span class="line">    <span class="keyword">is</span> UiOp.TranslateY -&gt; view.translationY = op.px</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上代码中，TranslateX 是一个类，它可以携带多于一个的信息，比如除了告诉 view 需要水平平移之外，还可以告诉 view 平移多少像素，甚至还可以告诉 view 平移的动画类型等信息，我想这大概就是密封类出现的意义吧。</p>
+<p>除此之外，如果 when 语句的分支不需要携带除“显示或隐藏view之外的其它信息”时（即只需要表明 when 语句分支，不需要携带额外数据时），用 object 关键字创建单例就可以了，并且此时 when 子句不需要使用 is 关键字。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://dongdong-zx.github.io">dongdong</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://dongdong-zx.github.io/posts/bc05b5f1052a/">https://dongdong-zx.github.io/posts/bc05b5f1052a/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://dongdong-zx.github.io" target="_blank">dongdong‘s blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/kotlin/">kotlin</a></div><div class="post_share"><div class="social-share" data-image="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/uploads/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">dongdong</div><div class="author-info__description">种一棵树最好的时间是十年前，其次是现在</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">21</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/dongdong-zx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content is-expand"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AF%86%E5%B0%81%E7%B1%BB%E4%B8%8E%E6%9E%9A%E4%B8%BE%E7%B1%BB%E5%AF%B9%E6%AF%94"><span class="toc-number">2.</span> <span class="toc-text">密封类与枚举类对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E7%8A%B6%E6%80%81%E9%9B%86"><span class="toc-number">3.</span> <span class="toc-text">创建状态集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8"><span class="toc-number">4.</span> <span class="toc-text">使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E7%AE%80%E5%8C%96"><span class="toc-number">5.</span> <span class="toc-text">进一步简化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B"><span class="toc-number">6.</span> <span class="toc-text">举例</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/997d929fbaa8/" title="委托模式（Delegation）">委托模式（Delegation）</a><time datetime="2022-08-03T00:31:52.000Z" title="发表于 2022-08-03 08:31:52">2022-08-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/5dc50ca1b13b/" title="模版方法模式（Template）">模版方法模式（Template）</a><time datetime="2022-08-03T00:27:00.000Z" title="发表于 2022-08-03 08:27:00">2022-08-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/eb9f21578549/" title="链表—反转链表">链表—反转链表</a><time datetime="2022-08-03T00:16:38.000Z" title="发表于 2022-08-03 08:16:38">2022-08-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/614050b302a2/" title="链表—链表中是否有环">链表—链表中是否有环</a><time datetime="2022-08-03T00:11:42.000Z" title="发表于 2022-08-03 08:11:42">2022-08-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/posts/fee3284ec80a/" title="动态规划—爬楼梯">动态规划—爬楼梯</a><time datetime="2022-08-03T00:09:14.000Z" title="发表于 2022-08-03 08:09:14">2022-08-03</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By dongdong</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async src="/js/categoryBar.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
